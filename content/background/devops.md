@@ -7,14 +7,6 @@ title: DevOps Compliance Culture
 
 > TLDR: DevOps teams who understand and conform to process with automation support outperform teams with external approvals and compliance managers.
 
-The way we build and deliver software has changed significantly over the years.  In the past, we would build systems on large, custom managed hardware.  Organizations were siloed by specialty, with different departments for analysis, development, quality assurance, and operations.  Software was delivered in releases, once a year, or once a quarter even.  Change was rare, risky, and large.
-
-{{< figure src="/images/changes-over-time.svg" alt="Software Landscape" >}}
-
-Over time, we have favoured smaller services-oriented architectures and independently deployable systems.  This allowed for more dynamic and resillient designs, and to leverage Conway's Law to organize our teams around these services.
-
-This trend continues, with the rising adoption of serverless features and functions-as-a-service available in cloud providers.
-
 ## Who is responsible for compliance?
 
 Traditionally, it was the IT department who were responsible for changing IT systems, and the volume of changes was relatively low.  This also meant that the responsibility of meeting these regulatory obligations rested with the IT department.
