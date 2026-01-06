@@ -1,6 +1,6 @@
-baseURL = "https://kosli.com/secure-sdlc-process-template/"
+baseURL = "https://sdlc.rbsdev.net"
 languageCode = "en-us"
-title = "The Secure SDLC Process Template"
+title = "The Rancho Biosciences SDLC Process Template"
 theme = "hugo-book"
 
 [taxonomies]
@@ -8,7 +8,7 @@ theme = "hugo-book"
   level = 'levels'
 
 [params]
-  company = 'AcmePay'
+  company = 'Rancho Biosciences'
   csor = 'a compliance system of record'
   vcs = 'git'
   vcsHost = 'github'

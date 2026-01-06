@@ -26,3 +26,6 @@ remedial actions.
 * Implement security scanning in the pipeline
 * Act in a timely manner to security issues
 * Consider security concerns in code reviews and software design
+
+## How we implement this control
+* We use [GitHub Advanced Security](https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security) to scan code and dependencies in our CI/CD pipelines

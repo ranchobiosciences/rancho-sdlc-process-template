@@ -23,9 +23,3 @@ Dependencies can include docker base images, 3rd-party libraries, and other
 source code.
 
 {{< figure src="/images/dependency-management.svg" alt="Dependency Management" >}}
-
-
-During build, these inputs to the build package can be recorded as the software
-bill-of-materials while recording
-[binary provenance]({{< relref "/process/ssdlc/build/binary_provenance" >}})
-

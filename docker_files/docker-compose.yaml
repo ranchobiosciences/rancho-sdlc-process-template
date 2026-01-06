@@ -1,0 +1,9 @@
+services:
+  app:
+    container_name: rancho_sdlc
+    build:
+      context: ..
+      dockerfile: docker_files/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8011:80"
