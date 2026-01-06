@@ -1,0 +1,102 @@
+name: Deploy to RBSDev
+
+on:
+  workflow_dispatch:
+  
+env:
+  REGISTRY: docker.io
+  ENV_NAME: dev
+  APP_NAME: rancho-sdlc-template
+
+jobs:
+  publish:
+    name: Build ${{ env.APP_NAME }} images
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push APP
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker_files/Dockerfile
+        push: true
+        tags: ${{ env.REGISTRY }}/${{secrets.DOCKERHUB_USERNAME}}/${{ env.APP_NAME }}:${{ env.ENV_NAME }}
+        cache-from: type=registry,ref=${{ env.REGISTRY }}/${{secrets.DOCKERHUB_USERNAME}}/cache_${{ env.APP_NAME }}:${{ env.ENV_NAME }}
+        cache-to: type=registry,ref=${{ env.REGISTRY }}/${{secrets.DOCKERHUB_USERNAME}}/cache_${{ env.APP_NAME }}:${{ env.ENV_NAME }},mode=max
+
+  deploy:
+    needs: publish
+    name: Publish container to docker registry
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Create and save OpenVPN config file
+      run: |
+        echo "${{ secrets.OPENVPN_CONFIG }}" | base64 --decode > /tmp/openvpn.ovpn
+        echo "${{ secrets.OVPN_PASSWORD }}" > pass.txt
+
+    - name: Install OpenVPN
+      run: |
+        sudo apt update
+        sudo apt install -y openvpn openvpn-systemd-resolved
+
+    - name: Start OpenVPN connection
+      run: |
+        sudo openvpn --config /tmp/openvpn.ovpn --daemon
+        # Wait for the connection to be established
+        sleep 10
+        # Setup DNS to use VPN's DNS
+        sudo cp /etc/resolv.conf /etc/resolv.conf.backup
+        sudo bash -c 'echo "nameserver 10.91.10.212" > /etc/resolv.conf'
+
+    - name: Create APP_PATH
+      run: echo "APP_PATH=${{ vars.WORK_DIR_RBSDEV }}/${{ env.APP_NAME }}-${{ env.ENV_NAME }}" >> $GITHUB_ENV
+
+    - name: Copy docker-compose to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST_RBSDEV }}
+        username: ${{ vars.SSH_USER_RBSDEV }}
+        key: ${{ secrets.SSH_PRIVATE_KEY_RBSDEV }}
+        port: 22
+        overwrite: true
+        strip_components: 1
+        timeout: 2m
+        proxy_timeout: 1m
+        source: "docker_files/docker-compose.${{ env.ENV_NAME }}.yaml"
+        target: "${{ env.APP_PATH }}"
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST_RBSDEV }}
+        username: ${{ vars.SSH_USER_RBSDEV }}
+        key: ${{ secrets.SSH_PRIVATE_KEY_RBSDEV }}
+        port: 22
+        script_stop: true
+        timeout: 2m
+        command_timeout: 20m
+        proxy_timeout: 1m
+        script: |
+          cd ${{ env.APP_PATH }}
+          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login ${{ env.REGISTRY}} -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin            
+          docker compose -f docker-compose.${{ env.ENV_NAME }}.yaml --env-file=.env pull
+          docker compose -f docker-compose.${{ env.ENV_NAME }}.yaml --env-file=.env -p ${{ env.APP_NAME }}-${{ env.ENV_NAME }} up -d
+
+      
