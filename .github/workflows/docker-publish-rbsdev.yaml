@@ -96,7 +96,7 @@ jobs:
         script: |
           cd ${{ env.APP_PATH }}
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login ${{ env.REGISTRY}} -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin            
-          docker compose -f docker-compose.${{ env.ENV_NAME }}.yaml --env-file=.env pull
-          docker compose -f docker-compose.${{ env.ENV_NAME }}.yaml --env-file=.env -p ${{ env.APP_NAME }}-${{ env.ENV_NAME }} up -d
+          docker compose -f docker-compose.${{ env.ENV_NAME }}.yaml pull
+          docker compose -f docker-compose.${{ env.ENV_NAME }}.yaml -p ${{ env.APP_NAME }}-${{ env.ENV_NAME }} up -d
 
       
