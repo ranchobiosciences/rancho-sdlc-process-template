@@ -10,7 +10,7 @@ env:
 
 jobs:
   publish:
-    name: Build ${{ env.APP_NAME }} images
+    name: Build rancho-sdlc-template images
     runs-on: ubuntu-latest
 
     steps:
