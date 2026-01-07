@@ -50,7 +50,7 @@ When we discovered that this wasn’t true we built a platform to automate the c
 
 If you want to bake change management automation into it so you can breeze the "proving" part please contact us.
 
-## Who needs Kosli’s secure SDLC process template?
+## Who needs Rancho Biosciences’ secure SDLC process template?
 
 In our experience, the problem we’re solving with the secure SDLC template affects two different types of teams
 
