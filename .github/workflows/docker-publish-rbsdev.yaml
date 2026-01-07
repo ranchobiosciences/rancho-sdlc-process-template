@@ -2,6 +2,8 @@ name: Deploy to RBSDev
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ "develop" ]
   
 env:
   REGISTRY: docker.io
