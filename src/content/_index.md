@@ -10,7 +10,7 @@ bookToC: true
 
 ## Overview
 
-**How to define your software delivery process with Kosli’s secure SDLC template**
+**How to define your software delivery process with Rancho Biosciences’s secure SDLC template**
 
 This is a secure SDLC process template for teams who want to practice continuous delivery with audit, compliance, and security baked into their deployments. 
 
